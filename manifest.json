@@ -1,0 +1,19 @@
+{
+   "background_page": "background.html",
+   "content_scripts": [ {
+      "all_frames": true,
+      "js": [ "jquery.min.js", "mailto.js" ],
+      "matches": [ "http://*/*" ]
+   } ],
+   "description": "Choose how you want to send email.",
+   "icons": {
+      "128": "images/gmail-extension-128.png",
+      "16": "images/gmail-extension-16.png",
+      "32": "images/gmail-extension-32.png",
+      "64": "images/gmail-extension-64.png"
+   },
+   "name": "mailto:fromme",
+   "options_page": "options.html",
+   "permissions": [ "tabs", "http://*/*", "https://*/*", "http://*.google.com/" ],
+   "version": "1.0"
+}

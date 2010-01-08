@@ -1,0 +1,126 @@
+<!DOCTYPE>
+<!--
+ * Copyright (c) 2009 The Chromium Authors. All rights reserved.  Use of this
+ * source code is governed by a BSD-style license that can be found in the
+ * LICENSE file.
+-->
+<html>
+<head>
+<title>Options for mailto:fromme</title>
+<script><!--
+function loadSavedOptions() {
+  if (window.localStorage == null) {
+    alert("LocalStorage must be enabled for managing options.");
+    return;
+  }
+
+	//do apps stuff
+	var appsDomains = getAppsDomains();
+	var appsOptions = document.getElementById('apps-options');
+	appsOptions.innerHTML = '';
+	for (key in appsDomains) {
+		var checked = '';
+		if (appsDomains[key]) {
+			checked = ' checked';		  
+		}
+		appsOptions.innerHTML += '<p><input type="checkbox" ' + checked + ' id="use-apps-' + key + '" /> <label for="use-apps-' + key + '">Use <a target="_blank" rel="noreferrer" href="http://mail.google.com/a/' + key + '">' + key + '</a> as an option</label> <a href="javascript:removeAppsDomain(\'' + key + '\');">remove</a></p>';
+  	}
+
+  	//base gmail
+	if (localStorage["base-gmail"] == 'true') {
+		document.getElementById('use-base-gmail').checked = true;
+	}
+}
+
+function getAppsDomains() {
+	var domainName = localStorage["domainName"];
+	if (typeof domainName == 'undefined') {
+		domainName = Object();
+	} else {
+		domainName = JSON.parse(domainName);
+	}
+	return domainName;
+}
+
+function removeAppsDomain(domain) {
+	  var appsDomains = getAppsDomains();
+	  var cleanAppsDomains = new Object();
+	  for (key in appsDomains) {
+		  if (key && key != domain){
+			  cleanAppsDomains[key]= appsDomains[key];
+		  }
+	  }
+	localStorage["domainName"] = JSON.stringify(cleanAppsDomains);
+	loadSavedOptions();
+}
+function addAppsDomain() {
+	var domainVal = document.getElementById('domain_info').value; 
+	console.log("Domain - " + domainVal);
+	if ((domainVal != "") && (domainVal.indexOf('.') == -1)) {
+		alert("Does not look like a valid domain - " + domainVal + "\nPlease re-enter");
+	} else {
+		var appsDomains = getAppsDomains();
+		for (key in appsDomains) {
+			if (key && key == domainVal){
+				//was already set
+				alert(domainVal + " is already an option.\nPlease re-enter");
+				console.log(domainVal + ' - was already in the index');
+			}
+		}
+		//set the default to true...
+		appsDomains[domainVal] = true;
+		localStorage["domainName"] = JSON.stringify(appsDomains);
+		loadSavedOptions();
+	}
+}
+
+
+function saveOptions() {
+	//gmail base
+	localStorage["base-gmail"] = document.getElementById('use-base-gmail').checked;
+
+	//apps
+	var appsDomains = getAppsDomains();
+	for (key in appsDomains) {
+		if (key){
+			appsDomains[key] = document.getElementById('use-apps-' + key).checked
+		}
+	}
+	localStorage["domainName"] = JSON.stringify(appsDomains);
+
+
+	loadSavedOptions();
+		
+}
+
+--></script>
+</head>
+<body onload="loadSavedOptions()">
+<br />
+<table>
+	<tr>
+		<td width="20%"><img src="images/gmail-extension-64.png"
+			width="64" height="64" /></td>
+		<td>
+		<h3>Options for mailto:fromme</h3>
+		</td>
+	</tr>
+</table>
+<br />
+<form action="javascript:saveOptions()">
+<fieldset id="gmail-options">
+<h2>Gmail Options</h2>
+<div><input type="checkbox" id="use-base-gmail" /> <label
+	for="use-base-gmail">Use Gmail as an option</label></div>
+<div id="apps-options"></div>
+<div id="apps-new" class="input_option">
+<p><strong>add a new <a href="http://www.google.com/apps/">
+Google Apps for your domain</a> account:</strong> (Enter just the base domain
+yourdomain.com instead of www.yourdomain.com)</p>
+<input id="domain_info" type="text" name="domain_info" value=""><a href="javascript:addAppsDomain();"> add</a>
+</div>
+<br />
+<input type="submit" value="Save" />
+</form>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!--
+// Copyright (c) 2009 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+-->
+<html>
+<head>
+
+<script>
+function getAppsDomains() {
+	var domainName = localStorage["domainName"];
+	if (typeof domainName == 'undefined') {
+		domainName = Object();
+	} else {
+		domainName = JSON.parse(domainName);
+	}
+	return domainName;
+}
+
+var baseGmailUrl = "https://mail.google.com/";
+var gmailUrlSuffix = "mail/?view=cm&fs=1&tf=1";
+
+function makeGmailDomainUrl(appsDomain) {
+  var gmailUrl = baseGmailUrl;
+  if (appsDomain) {
+    gmailUrl += "a/" + appsDomain + "/";
+  }
+  gmailUrl += gmailUrlSuffix;
+//  alert("GmailUrl - " + gmailUrl);
+  return gmailUrl;
+}
+
+// Send message to the mailto script to update its cached gmail url.
+// On any change in options, this message will be sent again.
+chrome.extension.onConnect.addListener(function(port) {
+  if (port.name != "GmailUrlConn") {
+  // Not the mailto content script, so do not want to talk to this port. 
+  } else {
+    port.onMessage.addListener(function(msg) {
+    if (msg.req == "GmailUrlPlease") {
+        var urls = new Object();
+        if (localStorage["base-gmail"] == 'true' ) {
+	        urls['gmail'] = makeGmailDomainUrl(false);
+        }
+        
+    	var appsDomains = getAppsDomains();
+    	for (key in appsDomains) {
+    		if (key && appsDomains[key] === true ) {
+    	        urls[key] = makeGmailDomainUrl(key);
+    		}
+    	}
+        var jsonUrls = JSON.stringify(urls);
+		console.log("about to post urls - " + jsonUrls);
+		port.postMessage({"urls": jsonUrls});
+    } else {
+      console.log("Unsupported req on valid port");
+    }
+    });
+  }
+});
+
+</script>
+</head>
+</html>
