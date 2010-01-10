@@ -6,13 +6,70 @@
 -->
 <html>
 <head>
-<title>Options for mailto:fromme</title>
+<title>WebMail Options</title>
+<link rel="stylesheet" href="tweak.css" type="text/css"></link>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="jquery-ui.min.js"></script>
 <script><!--
+/**
+ * Cookie plugin
+ *
+ * Copyright (c) 2006 Klaus Hartl (stilbuero.de)
+ * Dual licensed under the MIT and GPL licenses:
+ * http://www.opensource.org/licenses/mit-license.php
+ * http://www.gnu.org/licenses/gpl.html
+ *
+ */
+jQuery.cookie = function(name, value, options) {
+    if (typeof value != 'undefined') { // name and value given, set cookie
+        options = options || {};
+        if (value === null) {
+            value = '';
+            options.expires = -1;
+        }
+        var expires = '';
+        if (options.expires && (typeof options.expires == 'number' || options.expires.toUTCString)) {
+            var date;
+            if (typeof options.expires == 'number') {
+                date = new Date();
+                date.setTime(date.getTime() + (options.expires * 24 * 60 * 60 * 1000));
+            } else {
+                date = options.expires;
+            }
+            expires = '; expires=' + date.toUTCString(); // use expires attribute, max-age is not supported by IE
+        }
+        // CAUTION: Needed to parenthesize options.path and options.domain
+        // in the following expressions, otherwise they evaluate to undefined
+        // in the packed version for some reason...
+        var path = options.path ? '; path=' + (options.path) : '';
+        var domain = options.domain ? '; domain=' + (options.domain) : '';
+        var secure = options.secure ? '; secure' : '';
+        document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
+    } else { // only name given, get cookie
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+};
+
+
+
+
 function loadSavedOptions() {
-  if (window.localStorage == null) {
-    alert("LocalStorage must be enabled for managing options.");
-    return;
-  }
+	if (window.localStorage == null) {
+		prettyAlert('error-local-storage', 'Local Storage', domainVal);
+		return;
+	}
 
 	//do apps stuff
 	var appsDomains = getAppsDomains();
@@ -23,10 +80,10 @@ function loadSavedOptions() {
 		if (appsDomains[key]) {
 			checked = ' checked';		  
 		}
-		appsOptions.innerHTML += '<p><input type="checkbox" ' + checked + ' id="use-apps-' + key + '" /> <label for="use-apps-' + key + '">Use <a target="_blank" rel="noreferrer" href="http://mail.google.com/a/' + key + '">' + key + '</a> as an option</label> <a href="javascript:removeAppsDomain(\'' + key + '\');">remove</a></p>';
-  	}
+		appsOptions.innerHTML += '<p><input type="checkbox" ' + checked + ' onClick="saveOptions();" id="use-apps-' + key + '" /> <label for="use-apps-' + key + '">Use <a target="_blank" rel="noreferrer" href="http://mail.google.com/a/' + key + '">' + key + '</a> as an option</label> <a href="javascript:removeAppsDomain(\'' + key + '\');">remove</a></p>';
+	}
 
-  	//base gmail
+	//base gmail
 	if (localStorage["base-gmail"] == 'true') {
 		document.getElementById('use-base-gmail').checked = true;
 	}
@@ -53,26 +110,48 @@ function removeAppsDomain(domain) {
 	localStorage["domainName"] = JSON.stringify(cleanAppsDomains);
 	loadSavedOptions();
 }
+
+function prettyAlert(id, errTitle, domainVal) {
+	var badDomainDialog = $('#' + id).dialog({
+		modal:true,
+		draggable: false,
+		maxHeight: 400,
+		width: 400,
+		resizable: false,
+		autoOpen: false,
+		title: errTitle,
+		buttons: {
+		OK: function() {
+			$(this).dialog('close');
+		}
+	}	});
+	$('#' + id + ' h2').text(domainVal);
+	$('#' + id).dialog('open');
+	
+}
 function addAppsDomain() {
-	var domainVal = document.getElementById('domain_info').value; 
+	var domainVal = $('#domain_info').val(); 
 	console.log("Domain - " + domainVal);
 	if ((domainVal != "") && (domainVal.indexOf('.') == -1)) {
-		alert("Does not look like a valid domain - " + domainVal + "\nPlease re-enter");
+		prettyAlert('error-bad-domain', 'Bad domain', domainVal);
 	} else {
 		var appsDomains = getAppsDomains();
 		for (key in appsDomains) {
 			if (key && key == domainVal){
 				//was already set
-				alert(domainVal + " is already an option.\nPlease re-enter");
+				prettyAlert('error-dupe-domain', 'Duplicate domain', domainVal);
 				console.log(domainVal + ' - was already in the index');
+				return;
 			}
 		}
 		//set the default to true...
 		appsDomains[domainVal] = true;
 		localStorage["domainName"] = JSON.stringify(appsDomains);
 		loadSavedOptions();
+		$('#domain_info').val('');
 	}
 }
+
 
 
 function saveOptions() {
@@ -94,33 +173,108 @@ function saveOptions() {
 }
 
 --></script>
+<script><!--
+	$(document).ready(function(){
+		loadSavedOptions();
+		var theme = localStorage['theme'];
+		if (!theme) {
+			theme = 'Start';
+		}
+		$.cookie('jquery-ui-theme', theme.replace('-', ' ') );
+
+    $.getScript('http://jqueryui.com/themeroller/themeswitchertool/', function () {
+	    $('#switcher').themeswitcher( {
+	        onSelect: function() {
+//		    	$('#demo-dialog').dialog('open');
+		    	localStorage['theme'] = $.cookie('jquery-ui-theme').replace(' ','-');
+	    	}
+	    });
+    });
+
+    
+  });
+--></script>
+<style>
+body { 
+	margin:0;
+	padding:10px 0 0 10px;
+}
+* {
+	_margin:0;
+	_padding:0;
+}
+#theme-options {
+	position:relative;
+	min-height:220px;
+}
+h1 { 
+	background:url(images/gmail-extension-64.png) no-repeat 0px -5px;
+	padding:0 0 20px 70px;
+}
+</style>
+
 </head>
-<body onload="loadSavedOptions()">
-<br />
-<table>
-	<tr>
-		<td width="20%"><img src="images/gmail-extension-64.png"
-			width="64" height="64" /></td>
-		<td>
-		<h3>Options for mailto:fromme</h3>
-		</td>
-	</tr>
-</table>
-<br />
+<body>
+<h1>Options for WebMail Options</h1>
 <form action="javascript:saveOptions()">
-<fieldset id="gmail-options">
-<h2>Gmail Options</h2>
-<div><input type="checkbox" id="use-base-gmail" /> <label
-	for="use-base-gmail">Use Gmail as an option</label></div>
-<div id="apps-options"></div>
-<div id="apps-new" class="input_option">
-<p><strong>add a new <a href="http://www.google.com/apps/">
-Google Apps for your domain</a> account:</strong> (Enter just the base domain
-yourdomain.com instead of www.yourdomain.com)</p>
-<input id="domain_info" type="text" name="domain_info" value=""><a href="javascript:addAppsDomain();"> add</a>
-</div>
-<br />
-<input type="submit" value="Save" />
+	<fieldset id="gmail-options">
+		<h2>Gmail Options</h2>
+		<div>
+			<input type="checkbox" onClick="saveOptions()" id="use-base-gmail" /> 
+			<label for="use-base-gmail">Use Gmail as an option</label>
+		</div>
+		<div id="apps-options"></div>
+		<div id="apps-new" class="input_option">
+			<p><strong>add a new <a href="http://www.google.com/apps/">
+			Google Apps for your domain</a> account:</strong> (Enter just the base domain
+			yourdomain.com instead of www.yourdomain.com)</p>
+			<input id="domain_info" type="text" name="domain_info" value=""><a href="javascript:addAppsDomain();"> add</a>
+		</div>
+	</fieldset>
+	<fieldset id="theme-options">
+	<h2>Select your theme:</h2>
+		<div id="switcher"></div>
+		<div style="overflow: hidden; display: block; position:absolute; left:250px; top:10px; width: 533px;" class="ui-dialog ui-widget ui-widget-content ui-corner-all" tabindex="-1" role="dialog" aria-labelledby="ui-dialog-title-WebMailOptions-0">
+			<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" unselectable="on" >
+				<span class="ui-dialog-title" id="ui-dialog-title-WebMailOptions-0" unselectable="on" >WebMail Options</span>
+				<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" unselectable="on" >
+					<span class="ui-icon ui-icon-closethick" unselectable="on" >close</span>
+				</a>
+			</div>
+			<div id="WebMailOptions-0" style="height: auto; min-height: 131px;" class="ui-dialog-content ui-widget-content">
+				<h3>How would you like to send this message?</h3>
+				<ul>
+					<li>
+						<a title="via gmail" href="h#" rel="noreferrer" target="_blank">via gmail</a>
+					</li> 
+					<li>
+						<a title="via someappsaccount.com" href="#" rel="noreferrer" target="_blank">via someappsaccount.com</a>
+					</li> 
+					<li>
+						<a href="#" rel="WebMailOptions-0" title="via the system mail tool">via the system mail tool</a>
+					</li>
+				</ul>
+			</div>
+		</div>		
+	</fieldset>
 </form>
+<div id="error-local-storage" style="display:none;">
+    LocalStorage must be enabled for managing options.
+    <img src="images/gmail-extension-64.png" />
+</div>
+<div id="error-bad-domain" style="display:none;">
+	<img src="images/gmail-extension-64.png" style="float:left;" />
+	<h2>That domain name</h2>
+    <p>does not look like a valid domain.</p>
+    <p>Please re-enter</p>
+</div>
+<div id="error-dupe-domain" style="display:none;">
+	<img src="images/gmail-extension-64.png" style="float:left;" />
+	<h2>That domain name</h2>
+    <p>is already an option.</p>
+    <p>Please re-enter</p>
+    
+</div>
+
 </body>
 </html>

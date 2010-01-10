@@ -2,7 +2,7 @@
    "background_page": "background.html",
    "content_scripts": [ {
       "all_frames": true,
-      "js": [ "jquery.min.js", "mailto.js" ],
+      "js": [ "jquery.min.js", "jquery-ui.min.js", "mailto.js" ],
       "matches": [ "http://*/*" ]
    } ],
    "description": "Choose how you want to send email.",
@@ -12,7 +12,7 @@
       "32": "images/gmail-extension-32.png",
       "64": "images/gmail-extension-64.png"
    },
-   "name": "mailto:fromme",
+   "name": "WebMail Options",
    "options_page": "options.html",
    "permissions": [ "tabs", "http://*/*", "https://*/*", "http://*.google.com/" ],
    "version": "1.0"

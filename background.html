@@ -51,7 +51,7 @@ chrome.extension.onConnect.addListener(function(port) {
     	}
         var jsonUrls = JSON.stringify(urls);
 		console.log("about to post urls - " + jsonUrls);
-		port.postMessage({"urls": jsonUrls});
+		port.postMessage({"urls": jsonUrls, 'theme': localStorage["theme"].toLowerCase()});
     } else {
       console.log("Unsupported req on valid port");
     }

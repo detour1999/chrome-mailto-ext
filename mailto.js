@@ -20,28 +20,56 @@ function rewriteMailtoToGMailUrl(inUrl, gmailDomain) {
 
 
 function replaceMailToAnchor(anchor) {
-	strOptions += anchor.html();
-	anchor.wrap("<span></span>");
-	anchor.attr('title', anchor.attr('title') + ' via the system mail tool');
-	anchor.parent().hover(
-		function() {
-			$(this).children(".mailtofromme").show();
-		},
-		function () {
-			$(this).children(".mailtofromme").hide();
-		} 
-	);
+	//put together the dialog...
+	var strOptions =  '<div></div>';
+	var dialog = $(document.createElement("div")).attr("id",anchor.attr('rel')).prependTo("body"); 
+	dialog.css({'display': 'none'});
+	dialog.attr('id', anchor.attr('rel'));
+	dialog.attr('title', "WebMail Options");
 	
-	var strOptions =  '<span style="display:none;" class="mailtofromme">';
+	dialog.append($(document.createElement('h3')).text('How would you like to send this message?'));
+//	anchor.after('<img src="' + chrome.extension.getURL("images/mail.jpg") + '" alt="mail" />');
+	var optionsList = $(document.createElement('ul')).appendTo(dialog);
+	
 	for (key in mailToOptions) {
 		if (key) {
-//			strOptions = strOptions + ' <a target="_blank" rel="noreferrer" href="' + rewriteMailtoToGMailUrl(anchor.attr("href"), mailToOptions[key]) + '" title="' + rewriteMailtoToGMailUrl(anchor.attr("href"), mailToOptions[key]) + '">' + anchor.text() + " via " + key + '</a> ';
-			strOptions = strOptions + ' <a target="_blank" rel="noreferrer" href="' + rewriteMailtoToGMailUrl(anchor.attr("href"), mailToOptions[key]) + '" title="via ' + key + '"> via ' + key + '</a> ';
+			var newLink = '<li><a target="_blank" rel="noreferrer" href="' + rewriteMailtoToGMailUrl(anchor.attr("href"), mailToOptions[key]) + '" title="via ' + key + '">via ' + key + '</a></li> ';
+			optionsList.append(newLink);
 		}
 	}
-	strOptions += '</span>';
-	anchor.after(strOptions);
-	anchor.after('<img src="' + chrome.extension.getURL("images/mail.jpg") + '" alt="mail" />');
+	var aClone = anchor.clone();
+	aClone.attr('title', 'via the system mail tool');
+	aClone.text('via the system mail tool');
+	aClone.appendTo($(document.createElement('li')).appendTo(optionsList));
+
+	dialog.dialog({
+		modal:true,
+		draggable: false,
+		maxHeight: 400,
+		width: 'auto',
+		resizable: false,
+		close: function(){
+			$('#WebMailOptions-style').remove();
+		},
+		autoOpen: false,
+	});
+
+	//reset the anchor
+	anchor.click(
+		function() {
+			var selector = $(this).attr('rel');
+			$('head').append(
+					$(document.createElement('link')).attr({
+					rel : 'stylesheet',
+					type : 'text/css',
+					id : 'WebMailOptions-style',
+					href : 'http://ajax.googleapis.com/ajax/libs/jqueryui/' + $.ui.version + '/themes/' + mailToTheme + '/jquery-ui.css'
+					})
+					);
+			$('#' + selector).dialog('open');
+			return false;
+		} 
+	);
 }
 
 // Content Scripts
@@ -50,6 +78,9 @@ function rewriteMailtosOnPage() {
 	console.log("Starting to rewrite mailtos");
 	
 	$("a[href^='mailto:']").each( function () {
+		$(this).attr('rel', function(arr){
+			return 'WebMailOptions-' + arr;
+		});
 		replaceMailToAnchor(jQuery(this));
 		});
 }
@@ -66,7 +97,18 @@ if (window == top) {
   function(msg) {
 	console.log("Got message from bg page - " + msg.urls);
     mailToOptions = JSON.parse(msg.urls);
+    mailToTheme = msg.theme;
     rewriteMailtosOnPage();
+    
+	$('head').append(
+			$(document.createElement('link')).attr({
+			rel : 'stylesheet',
+			type : 'text/css',
+			href : chrome.extension.getURL("tweak.css")
+			})
+			);
+    
+    
     // Not sending any response to ack.
   });
 }
