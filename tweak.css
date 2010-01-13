@@ -1,4 +1,16 @@
 .ui-dialog .ui-dialog-title {
 	padding-left:26px;
-	background:url(images/gmail-extension-19.png) no-repeat top left;
+	background:url(images/sendthru32.png) no-repeat top left;
+}
+
+.ui-dialog .ui-dialog-titlebar {
+	padding:3px 0 1px 6px;
+}
+
+.ui-dialog-titlebar .ui-dialog-title {
+	display:block;
+	float:left;
+	margin:0.1em 0 0.2em;
+	padding:4px 0 5px 40px;
+	border-radius: 7px;
 }

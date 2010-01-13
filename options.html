@@ -6,7 +6,7 @@
 -->
 <html>
 <head>
-<title>WebMail Options</title>
+<title>SendThru - WebMail Options</title>
 <link rel="stylesheet" href="tweak.css" type="text/css"></link>
 <script type="text/javascript" src="jquery.min.js"></script>
 <script type="text/javascript" src="jquery-ui.min.js"></script>
@@ -80,7 +80,7 @@ function loadSavedOptions() {
 		if (appsDomains[key]) {
 			checked = ' checked';		  
 		}
-		appsOptions.innerHTML += '<p><input type="checkbox" ' + checked + ' onClick="saveOptions();" id="use-apps-' + key + '" /> <label for="use-apps-' + key + '">Use <a target="_blank" rel="noreferrer" href="http://mail.google.com/a/' + key + '">' + key + '</a> as an option</label> <a href="javascript:removeAppsDomain(\'' + key + '\');">remove</a></p>';
+		appsOptions.innerHTML += '<p><a target="_blank" rel="noreferrer" href="http://mail.google.com/a/' + key + '">' + key + '</a><br/><input type="checkbox" ' + checked + ' onClick="saveOptions();" id="use-apps-' + key + '" /> <label for="use-apps-' + key + '">Include as an option</label> <span>or <a href="javascript:removeAppsDomain(\'' + key + '\');">remove</a></span></p>';
 	}
 
 	//base gmail
@@ -195,86 +195,200 @@ function saveOptions() {
   });
 --></script>
 <style>
+
 body { 
 	margin:0;
 	padding:10px 0 0 10px;
+	background-color: #eee;
+	font-size:.9em;
+	font-family: verdana, helvetica, arial, sans-serif;
 }
+
 * {
 	_margin:0;
 	_padding:0;
 }
+
+h2,h3,h4 {
+	margin: 0px 0px 15px 0px;
+	color: #999;
+	font-weight: normal;
+}
+
+a,
+a:link,
+a:visited,
+a:hover,
+a:active {
+	color: #da791e;
+	text-decoration: none;
+}
+a:hover {
+	text-decoration: underline;
+}
+.mainWrapper {
+	background-color: #fff;
+	width: 600px;
+	margin: 0 auto;
+	border-radius: 18px;
+	border: 1px solid #ddd;
+}
+
+p {
+	margin: 4px 0px;
+}
+
+fieldset {
+	clear: both;
+}
+
+.stepLeft {
+	float: left;
+	width: 270px;
+}
+#apps-new {
+	
+}
+
+#apps-new p {
+	padding-bottom: 10px;
+}
+
+.stepRight {
+	border-left:1px solid #DDDDDD;
+	float:right;
+	margin-top:42px;
+	padding-left:21px;
+	width:283px;
+}
+
+.stepRight p{
+	padding: 6px 0px 6px 6px;
+	background-color: #eaeaea;
+	border: 1px solid #efefef;
+	border-radius: 5px;
+}
+
 #theme-options {
 	position:relative;
 	min-height:220px;
+	padding-top: 40px;
 }
+
+#theme-options p {
+	float:left;
+	margin:0 0 16px;
+	text-align:left;
+	width:355px;
+}
+.stepRight label {
+}
+
+#switcher {
+	float: right;
+}
+
+#gmailzie {
+	padding-bottom: 10px;
+}
+
 h1 { 
-	background:url(images/gmail-extension-64.png) no-repeat 0px -5px;
-	padding:0 0 20px 70px;
+	background:url(images/sendthru_logo.png) no-repeat bottom center;
+	height:70px;
+}
+
+h1 span{ 
+	display: block;
+	text-indent: -9999px;
+}
+
+fieldset {
+	border: none;
+}
+.errors img {
+	margin-right: 10px;
+}
+#awesome.ui-dialog-titlebar {
+	padding:3px 0 1px 6px;
+}
+
+#awesome.ui-dialog-titlebar .ui-dialog-title {
+	display:block;
+	float:left;
+	margin:0.1em 0 0.2em;
+	padding:4px 0 5px 40px;
+	border-radius: 7px;
 }
 </style>
 
 </head>
 <body>
-<h1>Options for WebMail Options</h1>
-<form action="javascript:saveOptions()">
-	<fieldset id="gmail-options">
-		<h2>Gmail Options</h2>
-		<div>
-			<input type="checkbox" onClick="saveOptions()" id="use-base-gmail" /> 
-			<label for="use-base-gmail">Use Gmail as an option</label>
-		</div>
-		<div id="apps-options"></div>
-		<div id="apps-new" class="input_option">
-			<p><strong>add a new <a href="http://www.google.com/apps/">
-			Google Apps for your domain</a> account:</strong> (Enter just the base domain
-			yourdomain.com instead of www.yourdomain.com)</p>
-			<input id="domain_info" type="text" name="domain_info" value=""><a href="javascript:addAppsDomain();"> add</a>
-		</div>
-	</fieldset>
-	<fieldset id="theme-options">
-	<h2>Select your theme:</h2>
-		<div id="switcher"></div>
-		<div style="overflow: hidden; display: block; position:absolute; left:250px; top:10px; width: 533px;" class="ui-dialog ui-widget ui-widget-content ui-corner-all" tabindex="-1" role="dialog" aria-labelledby="ui-dialog-title-WebMailOptions-0">
-			<div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" unselectable="on" >
-				<span class="ui-dialog-title" id="ui-dialog-title-WebMailOptions-0" unselectable="on" >WebMail Options</span>
-				<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" unselectable="on" >
-					<span class="ui-icon ui-icon-closethick" unselectable="on" >close</span>
-				</a>
+<div class="mainWrapper">	
+	<h1><span>Options for WebMail Options</span></h1>
+	<form action="javascript:saveOptions()">
+		<fieldset id="gmail-options">
+			<div class="stepLeft">
+				<h2>Step One</h2>
+				<div id="apps-new" class="input_option">
+					<p>Add a new <a href="http://www.google.com/apps/">
+					Google Apps</a> domain account: <em>(ex: yourdomain.com)</em></p>
+					www.<input id="domain_info" type="text" name="domain_info" value=""> <a href="javascript:addAppsDomain();">add</a>
+				</div>
 			</div>
-			<div id="WebMailOptions-0" style="height: auto; min-height: 131px;" class="ui-dialog-content ui-widget-content">
-				<h3>How would you like to send this message?</h3>
-				<ul>
-					<li>
-						<a title="via gmail" href="h#" rel="noreferrer" target="_blank">via gmail</a>
-					</li> 
-					<li>
-						<a title="via someappsaccount.com" href="#" rel="noreferrer" target="_blank">via someappsaccount.com</a>
-					</li> 
-					<li>
-						<a href="#" rel="WebMailOptions-0" title="via the system mail tool">via the system mail tool</a>
-					</li>
-				</ul>
+			<div class="stepRight">
+				<h3>Account Options</h3>
+				<div id="gmailzie">
+					<input type="checkbox" onClick="saveOptions()" id="use-base-gmail" /> 
+					<label  for="use-base-gmail">Include Gmail as an option</label>
+				</div>
+				<div id="apps-options"></div>
 			</div>
-		</div>		
-	</fieldset>
-</form>
-<div id="error-local-storage" style="display:none;">
-    LocalStorage must be enabled for managing options.
-    <img src="images/gmail-extension-64.png" />
-</div>
-<div id="error-bad-domain" style="display:none;">
-	<img src="images/gmail-extension-64.png" style="float:left;" />
-	<h2>That domain name</h2>
-    <p>does not look like a valid domain.</p>
-    <p>Please re-enter</p>
-</div>
-<div id="error-dupe-domain" style="display:none;">
-	<img src="images/gmail-extension-64.png" style="float:left;" />
-	<h2>That domain name</h2>
-    <p>is already an option.</p>
-    <p>Please re-enter</p>
+		</fieldset>
+		<fieldset id="theme-options">
+			<h2>Step Two</h2>
+			<p>Select the theme of the SendThru popup:</p>
+			<div id="switcher"></div>
+			<div style="overflow: hidden; display: block; width: 565px;" class="ui-dialog ui-widget ui-widget-content ui-corner-all" tabindex="-1" role="dialog" aria-labelledby="ui-dialog-title-WebMailOptions-0">
+				<div id="awesome" class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix" unselectable="on" >
+					<span class="ui-dialog-title" id="ui-dialog-title-WebMailOptions-0" unselectable="on" >SendThru WebMail Options</span>
+					<a href="#" class="ui-dialog-titlebar-close ui-corner-all" role="button" unselectable="on" >
+						<span class="ui-icon ui-icon-closethick" unselectable="on" >close</span>
+					</a>
+				</div>
+				<div id="WebMailOptions-0" style="height: auto; min-height: 131px;" class="ui-dialog-content ui-widget-content">
+					<h3>How would you like to send this message?</h3>
+					<ul>
+						<li>
+							<a title="via gmail" href="h#" rel="noreferrer" target="_blank">via gmail</a>
+						</li> 
+						<li>
+							<a title="via someappsaccount.com" href="#" rel="noreferrer" target="_blank">via someappsaccount.com</a>
+						</li> 
+						<li>
+							<a href="#" rel="WebMailOptions-0" title="via the system mail tool">via the system mail tool</a>
+						</li>
+					</ul>
+				</div>
+			</div>		
+		</fieldset>
+	</form>
+	<div class="errors" id="error-local-storage" style="display:none;">
+	    LocalStorage must be enabled for managing options.
+	    <img src="images/sendthru64.png" />
+	</div>
+	<div class="errors" id="error-bad-domain" style="display:none;">
+		<img src="images/sendthru64.png" style="float:left;" />
+	    <p>Please re-enter:</p>
+		<h2>That domain name</h2>
+	    <p>It does not look like a valid domain.</p>
+	</div>
+	<div class="errors" id="error-dupe-domain" style="display:none;">
+		<img src="images/sendthru64.png" style="float:left;" />
+	    <p>Please re-enter:</p>
+		<h2>That domain name</h2>
+	    <p>That domain is already an option.</p>
     
+	</div>
 </div>
-
 </body>
 </html>
