@@ -2,7 +2,7 @@
    "background_page": "background.html",
    "content_scripts": [ {
       "all_frames": true,
-      "js": [ "jquery.min.js", "jquery-ui.min.js", "mailto.js" ],
+      "js": [ "js/jquery.min.js", "js/jquery-ui.min.js", "js/mailto.js" ],
       "matches": [ "http://*/*" ]
    } ],
    "description": "Choose how you want to send email.",
@@ -15,5 +15,5 @@
    "name": "SendThru",
    "options_page": "options.html",
    "permissions": [ "tabs", "http://*/*", "https://*/*", "http://*.google.com/" ],
-   "version": "0.5"
+   "version": "0.6"
 }

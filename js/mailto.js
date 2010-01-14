@@ -33,7 +33,7 @@ function replaceMailToAnchor(anchor) {
 	var dialog = $(document.createElement("div")).attr("id",anchor.attr('rel')).prependTo("body"); 
 	dialog.css({'display': 'none'});
 	dialog.attr('id', anchor.attr('rel'));
-	dialog.attr('title', "WebMail Options");
+	dialog.attr('title', "SendThru Options");
 	
 	dialog.append($(document.createElement('h3')).text('How would you like to send this message?'));
 //	anchor.after('<img src="' + chrome.extension.getURL("images/mail.jpg") + '" alt="mail" />');
@@ -41,17 +41,6 @@ function replaceMailToAnchor(anchor) {
 	
 	for (key in mailToOptions) {
 		if (key) {
-//			if (key == 'yahoo'){
-//				var newLink = '<li><a onclick="$(\'#' + anchor.attr('rel') + '\').dialog(\'close\');" target="_blank" rel="noreferrer" href="' + rewriteMailtoToYahooUrl(anchor.attr("href"), mailToOptions[key]) + '" title="via ' + key + '">via ' + key + '</a></li> ';
-//			} else {
-//				var newLink = '<li><a 
-//					onclick="$(\'#' + anchor.attr('rel') + '\').dialog(\'close\');" 
-//					target="_blank" 
-//					rel="noreferrer" 
-//					href="' + rewriteMailtoToGMailUrl(anchor.attr("href"), mailToOptions[key]) + '" 
-//					title="via ' + key + '">via ' + key + '</a></li> ';
-//			}
-			
 			var newLink = $(document.createElement('a')).appendTo($(document.createElement('li')).appendTo(optionsList));
 			newLink.attr({
 				target: '_blank',
@@ -95,7 +84,7 @@ function replaceMailToAnchor(anchor) {
 		width: 'auto',
 		resizable: false,
 		close: function(){
-			$('#WebMailOptions-style').remove();
+			$('#SendThru-style').remove();
 		},
 		autoOpen: false,
 	});
@@ -108,7 +97,7 @@ function replaceMailToAnchor(anchor) {
 					$(document.createElement('link')).attr({
 					rel : 'stylesheet',
 					type : 'text/css',
-					id : 'WebMailOptions-style',
+					id : 'SendThru-style',
 					href : 'http://ajax.googleapis.com/ajax/libs/jqueryui/' + $.ui.version + '/themes/' + mailToTheme + '/jquery-ui.css'
 					})
 					);
@@ -125,7 +114,7 @@ function rewriteMailtosOnPage() {
 	
 	$("a[href^='mailto:']").each( function () {
 		$(this).attr('rel', function(arr){
-			return 'WebMailOptions-' + arr;
+			return 'SendThru-' + arr;
 		});
 		replaceMailToAnchor(jQuery(this));
 		});
