@@ -6,7 +6,7 @@
 -->
 <html>
 <head>
-<title>SendThru - WebMail Options</title>
+<title>SendThru - Options</title>
 <link rel="stylesheet" href="tweak.css" type="text/css"></link>
 <script type="text/javascript" src="jquery.min.js"></script>
 <script type="text/javascript" src="jquery-ui.min.js"></script>
@@ -87,6 +87,12 @@ function loadSavedOptions() {
 	if (localStorage["base-gmail"] == 'true') {
 		document.getElementById('use-base-gmail').checked = true;
 	}
+	if (localStorage["base-yahoo"] == 'true') {
+		document.getElementById('use-base-yahoo').checked = true;
+	}
+	if (localStorage["base-hotmail"] == 'true') {
+		document.getElementById('use-base-hotmail').checked = true;
+	}
 }
 
 function getAppsDomains() {
@@ -157,6 +163,10 @@ function addAppsDomain() {
 function saveOptions() {
 	//gmail base
 	localStorage["base-gmail"] = document.getElementById('use-base-gmail').checked;
+	//yahoo base
+	localStorage["base-yahoo"] = document.getElementById('use-base-yahoo').checked;
+	//hotmail base
+	localStorage["base-hotmail"] = document.getElementById('use-base-hotmail').checked;
 
 	//apps
 	var appsDomains = getAppsDomains();
@@ -196,6 +206,8 @@ function saveOptions() {
 --></script>
 <style>
 
+/*Auto Clear*/
+.option-group:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 body { 
 	margin:0;
 	padding:10px 0 0 10px;
@@ -257,7 +269,7 @@ fieldset {
 .stepRight {
 	border-left:1px solid #DDDDDD;
 	float:right;
-	margin-top:42px;
+	margin-top: -42px;
 	padding-left:21px;
 	width:283px;
 }
@@ -269,6 +281,11 @@ fieldset {
 	border-radius: 5px;
 }
 
+.option-group {
+	padding-bottom:5px;
+	margin-bottom:5px;
+	border-bottom:1px dotted #efefef;
+}
 #theme-options {
 	position:relative;
 	min-height:220px;
@@ -288,7 +305,7 @@ fieldset {
 	float: right;
 }
 
-#gmailzie {
+#yahoozie, #hotmailzie, #gmailzie {
 	padding-bottom: 10px;
 }
 
@@ -327,21 +344,37 @@ fieldset {
 	<h1><span>Options for WebMail Options</span></h1>
 	<form action="javascript:saveOptions()">
 		<fieldset id="gmail-options">
-			<div class="stepLeft">
-				<h2>Step One</h2>
-				<div id="apps-new" class="input_option">
-					<p>Add a new <a href="http://www.google.com/apps/">
-					Google Apps</a> domain account: <em>(ex: yourdomain.com)</em></p>
-					www.<input id="domain_info" type="text" name="domain_info" value=""> <a href="javascript:addAppsDomain();">add</a>
+			<h2>Step One</h2>
+			<div class="google option-group">
+				<h3>Google Options</h3>
+				<div class="stepLeft">
+					<div id="gmailzie">
+						<input type="checkbox" onClick="saveOptions()" id="use-base-gmail" /> 
+						<label  for="use-base-gmail">Include Gmail as an option</label>
+					</div>
+					<div id="apps-options"></div>
+				</div>
+				<div class="stepRight">
+					<div id="apps-new" class="input_option">
+						<p>Add a new <a href="http://www.google.com/apps/">
+						Google Apps</a> domain account: <em>(ex: yourdomain.com)</em></p>
+						www.<input id="domain_info" type="text" name="domain_info" value=""> <a href="javascript:addAppsDomain();">add</a>
+					</div>
 				</div>
 			</div>
-			<div class="stepRight">
-				<h3>Account Options</h3>
-				<div id="gmailzie">
-					<input type="checkbox" onClick="saveOptions()" id="use-base-gmail" /> 
-					<label  for="use-base-gmail">Include Gmail as an option</label>
+			<div class="yahoo option-group">
+				<h3>Yahoo! Options</h3>
+				<div id="yahoozie">
+					<input type="checkbox" onClick="saveOptions()" id="use-base-yahoo" /> 
+					<label  for="use-base-yahoo">Include Yahoo!Mail as an option</label>
 				</div>
-				<div id="apps-options"></div>
+			</div>
+			<div class="hotmail option-group">
+				<h3>Hotmail/Live Options</h3>
+				<div id="hotmailzie">
+					<input type="checkbox" onClick="saveOptions()" id="use-base-hotmail" /> 
+					<label  for="use-base-hotmail">Include Hotmail/Live as an option</label> 
+				</div>
 			</div>
 		</fieldset>
 		<fieldset id="theme-options">
@@ -362,7 +395,7 @@ fieldset {
 							<a title="via gmail" href="h#" rel="noreferrer" target="_blank">via gmail</a>
 						</li> 
 						<li>
-							<a title="via someappsaccount.com" href="#" rel="noreferrer" target="_blank">via someappsaccount.com</a>
+							<a title="via yahoo" href="#" rel="noreferrer" target="_blank">via yahoo</a>
 						</li> 
 						<li>
 							<a href="#" rel="WebMailOptions-0" title="via the system mail tool">via the system mail tool</a>

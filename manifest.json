@@ -7,13 +7,13 @@
    } ],
    "description": "Choose how you want to send email.",
    "icons": {
-      "128": "images/gmail-extension-128.png",
-      "16": "images/gmail-extension-16.png",
-      "32": "images/gmail-extension-32.png",
-      "64": "images/gmail-extension-64.png"
+      "128": "images/sendthru128.png",
+      "16": "images/sendthru16.png",
+      "32": "images/sendthru32.png",
+      "64": "images/sendthru64.png"
    },
-   "name": "WebMail Options",
+   "name": "SendThru",
    "options_page": "options.html",
    "permissions": [ "tabs", "http://*/*", "https://*/*", "http://*.google.com/" ],
-   "version": "1.0"
+   "version": "0.5"
 }

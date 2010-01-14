@@ -18,6 +18,14 @@ function rewriteMailtoToGMailUrl(inUrl, gmailDomain) {
   return retUrl;
 }
 
+function rewriteMailtoToYahooUrl(inUrl, yahooDomain) {
+	var retUrl = yahooDomain + escape(inUrl);
+	return retUrl;
+}
+function rewriteMailtoToHotmailUrl(inUrl, hotmailDomain) {
+	var retUrl = hotmailDomain + escape(inUrl);
+	return retUrl;
+}
 
 function replaceMailToAnchor(anchor) {
 	//put together the dialog...
@@ -33,13 +41,51 @@ function replaceMailToAnchor(anchor) {
 	
 	for (key in mailToOptions) {
 		if (key) {
-			var newLink = '<li><a target="_blank" rel="noreferrer" href="' + rewriteMailtoToGMailUrl(anchor.attr("href"), mailToOptions[key]) + '" title="via ' + key + '">via ' + key + '</a></li> ';
-			optionsList.append(newLink);
+//			if (key == 'yahoo'){
+//				var newLink = '<li><a onclick="$(\'#' + anchor.attr('rel') + '\').dialog(\'close\');" target="_blank" rel="noreferrer" href="' + rewriteMailtoToYahooUrl(anchor.attr("href"), mailToOptions[key]) + '" title="via ' + key + '">via ' + key + '</a></li> ';
+//			} else {
+//				var newLink = '<li><a 
+//					onclick="$(\'#' + anchor.attr('rel') + '\').dialog(\'close\');" 
+//					target="_blank" 
+//					rel="noreferrer" 
+//					href="' + rewriteMailtoToGMailUrl(anchor.attr("href"), mailToOptions[key]) + '" 
+//					title="via ' + key + '">via ' + key + '</a></li> ';
+//			}
+			
+			var newLink = $(document.createElement('a')).appendTo($(document.createElement('li')).appendTo(optionsList));
+			newLink.attr({
+				target: '_blank',
+				rel: 'noreferrer',
+				title: 'via ' + key,
+				rev: anchor.attr('rel'),
+				href: rewriteMailtoToGMailUrl(anchor.attr("href"), mailToOptions[key])
+			});
+			if (key == 'yahoo'){
+				newLink.attr({
+					href: rewriteMailtoToYahooUrl(anchor.attr("href"), mailToOptions[key])
+				});
+			}
+			if (key == 'hotmail'){
+				newLink.attr({
+					href: rewriteMailtoToHotmailUrl(anchor.attr("href"), mailToOptions[key])
+				});
+			}
+			newLink.click (
+				function() {
+					$('#' + $(this).attr('rev')).dialog('close');
+				}
+					);
+			newLink.text('via ' + key);
 		}
 	}
 	var aClone = anchor.clone();
 	aClone.attr('title', 'via the system mail tool');
 	aClone.text('via the system mail tool');
+	aClone.click (
+			function() {
+				$('#' + $(this).attr('rev')).dialog('close');
+			}
+			);
 	aClone.appendTo($(document.createElement('li')).appendTo(optionsList));
 
 	dialog.dialog({

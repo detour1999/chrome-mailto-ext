@@ -6,7 +6,7 @@
 <html>
 <head>
 
-<script>
+<script><!--
 function getAppsDomains() {
 	var domainName = localStorage["domainName"];
 	if (typeof domainName == 'undefined') {
@@ -30,6 +30,17 @@ function makeGmailDomainUrl(appsDomain) {
   return gmailUrl;
 }
 
+function makeYahooDomainUrl() {
+	var yahooUrl = 'http://us.mg2.mail.yahoo.com/dc/launch?.gx=0&.rand=' + Math.floor(Math.random()*9999) + '&action=compose&To=';
+//	yahooUrl = 'http://compose.mail.yahoo.com/?To=';
+	return yahooUrl;
+}
+function makeHotmailDomainUrl() {
+	var hotmailUrl = 'http://www.hotmail.msn.com/secure/start?action=compose&to';
+	hotmailUrl = 'http://mail.live.com/mail/mail.aspx?rru=compose%3faction%3dcompose%26to%3d';
+	return hotmailUrl;
+}
+
 // Send message to the mailto script to update its cached gmail url.
 // On any change in options, this message will be sent again.
 chrome.extension.onConnect.addListener(function(port) {
@@ -41,6 +52,12 @@ chrome.extension.onConnect.addListener(function(port) {
         var urls = new Object();
         if (localStorage["base-gmail"] == 'true' ) {
 	        urls['gmail'] = makeGmailDomainUrl(false);
+        }
+        if (localStorage["base-yahoo"] == 'true' ) {
+	        urls['yahoo'] = makeYahooDomainUrl(false);
+        }
+        if (localStorage["base-hotmail"] == 'true' ) {
+	        urls['hotmail'] = makeHotmailDomainUrl(false);
         }
         
     	var appsDomains = getAppsDomains();
@@ -59,6 +76,6 @@ chrome.extension.onConnect.addListener(function(port) {
   }
 });
 
-</script>
+--></script>
 </head>
 </html>
